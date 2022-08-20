@@ -166,14 +166,61 @@ pub fn mk_two_lines() -> (MapLine, MapLine) {
     (result_1, result_2)
 }
 
- pub fn run() {
+pub fn run(force: usize) {
     let mut map = SudokuMap::new();
-    for _n in 0..=100 {
+    for _n in 0..force {
         map.exchange_line(mk_two_lines());
     }
     map.print();
 }
 
 pub fn origin() {
+    println!("Origin map:");
     SudokuMap::new().print();
+}
+
+pub fn ask(is_first_run: &bool) -> bool {
+    if *is_first_run {
+        println!("The program has started. Which do you want to do?");
+    }
+    println!("Type the number to choose!\n(1) Print origin map, which is changed to make a random map.\n(2) Make a random map.\n(3) Quit.");
+
+    let mut input = String::new();
+    std::io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to get input.");
+    let input: usize = input.trim().parse().expect("");
+    match input {
+        1 => {
+            origin();
+            true
+        }
+        2 => {
+            println!("Type the force, which means times to random the map.");
+            let mut input = String::new();
+            std::io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to get input.");
+            let input: usize = input.trim().parse().expect("No number!");
+            run(input);
+            true
+        }
+        3 => false,
+        _ => {
+            println!("Unexpected number!");
+            true
+        }
+    }
+}
+
+pub fn start() {
+    let mut is_first_run = true;
+    loop {
+        if !ask(&is_first_run) {
+            break;
+        }
+        if is_first_run {
+            is_first_run = false;
+        }
+    }
 }
